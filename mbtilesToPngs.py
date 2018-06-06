@@ -42,7 +42,6 @@ def select_all_images(conn):
             result['column'],
             result['row'],
             row[0],
-            row[1]
         )
 
 
@@ -69,11 +68,10 @@ def mkdir_p(path):
             raise
 
 
-def blobToFile(dir0, dir1, dir2, ablob, afile):
+def blobToFile(dir0, dir1, dir2, ablob):
     mkdir_p("./" + dir0)  # zoom
     mkdir_p("./" + dir0 + "/" + dir1)  # column
-    mkdir_p("./" + dir0 + "/" + dir1 + "/" + dir2)  # row
-    filename = "./" + dir0 + "/" + dir1 + "/" + dir2 + "/" + afile + ".png"
+    filename = "./" + dir0 + "/" + dir1 + "/" + dir2 + ".png"
     with open(filename, 'wb') as output_file:
         output_file.write(ablob)
 
