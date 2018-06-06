@@ -1,5 +1,5 @@
 # mbtilesToPngs
-This python program takes .mbtile files and extracts the images and places them into the correct directory structure `/${z}/${x}/${y}.png` that mimicks OpenStreetMap URI tile structure.
+This python program takes .mbtiles files and extracts the images and places them into the correct directory structure `/${z}/${x}/${y}.png` that mimicks OpenStreetMap URI tile structure.
 This is to allow for offline use of OpenStreetMaps, and I will be using [Flutter_Map](https://github.com/apptreesoftware/flutter_map) along with my own images for offline maps.
 
 ## Where to get .mbtiles?
