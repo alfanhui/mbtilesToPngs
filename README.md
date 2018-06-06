@@ -1,8 +1,8 @@
-# mbtileToPng
+# mbtilesToPngs
 This python program takes .mbtile files and extracts the images and places them into the correct directory structure `/${z}/${x}/${y}.png` that mimicks OpenStreetMap URI tile structure.
 This is to allow for offline use of OpenStreetMaps, and I will be using [Flutter_Map](https://github.com/apptreesoftware/flutter_map) along with my own images for offline maps.
 
-## Where to get .mbtile?
+## Where to get .mbtiles?
 OpenStreetMap says: Apart from very limited testing purposes, you should not use the tiles supplied by OpenStreetMap.org itself. OpenStreetMap is a volunteer-run non-profit body and cannot supply tiles for large-scale commercial use. Rather, you should use a third party provider that makes tiles from OSM data, or generate your own.
 
 [A Guide to generate your own](https://tilemill-project.github.io/tilemill/docs/guides/osm-bright-mac-quickstart/)
@@ -14,7 +14,7 @@ Warning! For Mac, when you install TileMill.app, it currently fails to start. Go
 ## How to use
 Make sure you have python3 install.
 
-`python3 mbtileToPng.py -i path_to_mbfile`
+`python3 mbtilesToPngs.py -i path_to_mbfiles`
 
 for example, I did:
 **python3 sqliteReader.py -i ./OSMBright.mbtiles**
