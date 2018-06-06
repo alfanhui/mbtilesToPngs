@@ -4,7 +4,9 @@ This is to allow for offline use of OpenStreetMaps, and I will be using [Flutter
 
 ## Where to get .mbtile?
 OpenStreetMap says: Apart from very limited testing purposes, you should not use the tiles supplied by OpenStreetMap.org itself. OpenStreetMap is a volunteer-run non-profit body and cannot supply tiles for large-scale commercial use. Rather, you should use a third party provider that makes tiles from OSM data, or generate your own.
-[Guide to generate your own](https://tilemill-project.github.io/tilemill/docs/guides/osm-bright-mac-quickstart/)
+
+[A Guide to generate your own](https://tilemill-project.github.io/tilemill/docs/guides/osm-bright-mac-quickstart/)
+
 This guide will go through the steps for compiling map data, downloading a specific area, customise the map, then export to mbtile. 
 
 Warning! For Mac, when you install TileMill.app, it currently fails to start. Go into *TileMill* > *Updates Preference* > *check Install* Developer Builds. 
