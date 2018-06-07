@@ -6,7 +6,7 @@ OpenStreetMap says: Apart from very limited testing purposes, you should not use
 
 [A Guide to generate your own](https://tilemill-project.github.io/tilemill/docs/guides/osm-bright-mac-quickstart/)
 
-This guide will go through the steps for compiling map data, downloading a specific area, customise the map, then export to mbtile. Warning! For Mac, when you install TileMill.app, it currently fails to start. Go into *TileMill* > *Updates Preference* > *check Install* Developer Builds.<br>
+This guide will go through the steps for compiling map data, downloading a specific area, customise the map, then export to mbtile. Warning! For Mac, when you install TileMill.app, it currently fails to start. Go into *TileMill* > *Updates Preference* > *check Install Developer Builds*.<br>
 
 ## How to use
 Make sure you have python3 install.<br>
