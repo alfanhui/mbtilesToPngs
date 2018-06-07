@@ -15,7 +15,12 @@ Make sure you have python3 install.<br>
 for example, I did:<br>
 **python3 sqliteReader.py -i ./OSMBright.mbtiles**
 
+## My map says file not found! Why are the filenames incorrect?
+[Read Here](http://www.maptiler.org/google-maps-coordinates-tile-bounds-projection/)<br>
+[And here](https://alastaira.wordpress.com/2011/07/06/converting-tms-tile-coordinates-to-googlebingosm-tile-coordinates/)<br>
+I've added option to convert TMS Tile Coordinates to Google/Bing/OSM Tile Coordinates. Just use `-tms` when running. 
 
+## Links
 [MBTiles](https://wiki.openstreetmap.org/wiki/MBTiles)<br>
 [Tiles](https://wiki.openstreetmap.org/wiki/Tiles)
 
