@@ -23,26 +23,42 @@ def create_connection(db_file):
     return None
 
 
-def select_all_images(conn):
+def select_all_images(conn, tms):
     """
     Query all rows in the tasks table
     :param conn: the Connection object
     :return:
     """
+
     cur = conn.cursor()
     cur.execute("SELECT * FROM images")
 
     rows = cur.fetchall()
-
-    print("Image count: " + str(len(rows)))
+    assets = {}
+    print("Imamge count: " + str(len(rows)))
+    print("TMS: " + str(tms))
     for row in rows:
         result = get_Metadata(conn, row[1])
+
+        # for printing
+        dir = str(result['zoom']) + "/" + str(result['column'])
+        assets[dir] = dir
+
+        # tsm check
+        xValue = result['row']
+        if(tms):
+            ymax = 1 << result['zoom']
+            xValue = ymax - result['row'] - 1
+
+        # generate png
         blobToFile(
-            result['zoom'],
-            result['column'],
-            result['row'],
-            row[0],
+            str(result['zoom']),  # {z}
+            str(result['column']),  # {x}
+            str(xValue),  # {y}
+            row[0],  # data
         )
+    for asset in assets:
+        print ('- assets/map/' + assets[asset] + "/")
 
 
 def get_Metadata(conn, id):
@@ -55,7 +71,7 @@ def get_Metadata(conn, id):
     cur.execute("SELECT * FROM map WHERE tile_id = ?", [id])
 
     row = cur.fetchone()
-    return({'zoom': str(row[0]), 'column': str(row[1]), 'row': str(row[2])})
+    return({'zoom': row[0], 'column': row[1], 'row': row[2]})
 
 
 def mkdir_p(path):
@@ -76,20 +92,21 @@ def blobToFile(dir0, dir1, dir2, ablob):
         output_file.write(ablob)
 
 
-def beginConvertion(database):
-    #database = "./OSMBright.mbtiles"
+def beginConvertion(database, tms):
+    # database = "./OSMBright.mbtiles"
 
     # create a database connection
     conn = create_connection(database)
     with conn:
-        print("Processing mbtiles..")
-        select_all_images(conn)
+        print("Processing mbtiles..\n***********\nIf you find your y coordinates (filename.png) are incorrect, use the -tsm option\n***********\n")
+        select_all_images(conn, tms)
 
 
 def main(argv):
     inputDir = ''
+    tms = False
     try:
-        opts, args = getopt.getopt(argv, "hi:o:", ["ifile="])
+        opts, args = getopt.getopt(argv, "hi:o:tms", ["ifile="])
     except getopt.GetoptError:
         print ('mbtilesToPngs.py -i <path_to_file> (.mbtiles only)')
         sys.exit(2)
@@ -102,11 +119,14 @@ def main(argv):
             if not os.path.isfile(inputDir):
                 print (inputDir, " file not found")
                 sys.exit()
+        elif opt in ("-tms"):
+            print("-tsm checked")
+            tms = True
     if inputDir == '':
         print ('mbtilesToPngs.py -i <path_to_file> (.mbtiles only)')
         sys.exit(2)
     start = time.time()
-    beginConvertion(inputDir)
+    beginConvertion(inputDir, tms)
     end = time.time()
     print("Time taken to complete: ", str(round((end - start), 2)), "s")
 
