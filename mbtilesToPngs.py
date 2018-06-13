@@ -23,7 +23,7 @@ def create_connection(db_file):
     return None
 
 
-def select_all_tiles(conn, tms):
+def select_all_tiles(conn, tms, databaseName):
     cur = conn.cursor()
     cur.execute("SELECT * FROM map")
 
@@ -32,30 +32,31 @@ def select_all_tiles(conn, tms):
     print("Map count: " + str(len(rows)))
     print("TMS: " + str(tms))
     for row in rows:
-        image = get_Image(conn, row[3])
+        image = get_image(conn, row[3])
 
         # for printing
         dir = str(row[0]) + "/" + str(row[1])
         assets[dir] = dir
 
         # tsm check
-        xValue = row[2]
+        yValue = row[2]
         if(tms):
             ymax = 1 << row[0]
-            xValue = ymax - row[2] - 1
+            yValue = ymax - row[2] - 1
 
         # generate png
-        blobToFile(
+        blob_to_file(
+            databaseName,
             str(row[0]),  # {z}
             str(row[1]),  # {x}
-            str(xValue),  # {y}
+            str(yValue),  # {y}
             image,  # data
         )
     for asset in assets:
-        print ('- assets/map/' + assets[asset] + "/")
+        print ('- assets/map/' + databaseName + '/' + assets[asset] + "/")
 
 
-def get_Image(conn, id):
+def get_image(conn, id):
     cur = conn.cursor()
     cur.execute("SELECT * FROM images WHERE tile_id = ?", [id])
 
@@ -73,22 +74,47 @@ def mkdir_p(path):
             raise
 
 
-def blobToFile(dir0, dir1, dir2, ablob):
-    mkdir_p("./" + dir0)  # zoom
-    mkdir_p("./" + dir0 + "/" + dir1)  # column
-    filename = "./" + dir0 + "/" + dir1 + "/" + dir2 + ".png"
+def blob_to_file(dir0, dir1, dir2, dir3, ablob):
+    directory = os.path.join(os.path.expanduser('~'),
+                             "Desktop", dir0, "map", dir1, dir2)
+    if not os.path.exists(directory):
+        os.makedirs(directory)
+    # mkdir_p("~/Desktop/" + dir0)  # database
+    # mkdir_p("~/Desktop/" + dir0 + "/map")  # map
+    # mkdir_p("~/Desktop/" + dir0 + "/map/" + dir1 + "/" + dir2)  # zoom
+    # mkdir_p("/" + dir0 + "/map/" + dir1 +
+    #         "/" + dir2 + "/" + dir3)  # column
+    filename = os.path.join(directory, (dir3 + ".png"))
     with open(filename, 'wb') as output_file:
         output_file.write(ablob)
 
 
-def beginConvertion(database, tms):
-    # database = "./OSMBright.mbtiles"
+def update_tms_row_to_zxy(conn):
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM map")
+    rows = cur.fetchall()
+    for row in rows:
+        ymax = 1 << row[0]
+        yValue = ymax - row[2] - 1
+        cur.execute("UPDATE map SET tile_row = ? WHERE zoom_level = ? AND tile_column = ? AND tile_row = ?",
+                    (yValue, row[0], row[1], row[2]))
+        conn.commit()
 
+
+def begin_convertion(database, tms):
     # create a database connection
-    conn = create_connection(database)
+    conn = sqlite3.connect(database)
+    if database.__contains__("/"):
+        database = database.split("/")[-1]
     with conn:
         print("Processing mbtiles..\n***********\nIf you find your y coordinates (filename.png) are incorrect, use the -tsm option\n***********\n")
-        select_all_tiles(conn, tms)
+        select_all_tiles(conn, tms, database.split(".")[0])
+        if tms:
+            print("Do you want to update the mbtiles database to zxy index?\n(y/n)")
+            strInput = input()
+            if "y" in strInput:
+                update_tms_row_to_zxy(conn)
+    conn.close()
 
 
 def main(argv):
@@ -115,7 +141,7 @@ def main(argv):
         print ('mbtilesToPngs.py -i <path_to_file> (.mbtiles only)')
         sys.exit(2)
     start = time.time()
-    beginConvertion(inputDir, tms)
+    begin_convertion(inputDir, tms)
     end = time.time()
     print("Time taken to complete: ", str(round((end - start), 2)), "s")
 
